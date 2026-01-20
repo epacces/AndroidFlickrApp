@@ -1,6 +1,7 @@
 package com.hepakkes.flickrapp.ui.screens
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hepakkes.flickrapp.data.FlickrRepository
 import com.hepakkes.flickrapp.data.model.FlickrPhoto
@@ -18,9 +19,9 @@ data class PhotoGridUiState(
     val canLoadMore: Boolean = true
 )
 
-class PhotoGridViewModel : ViewModel() {
-
-    private val repository = FlickrRepository()
+class PhotoGridViewModel(
+    private val repository: FlickrRepository = FlickrRepository()
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PhotoGridUiState())
     val uiState: StateFlow<PhotoGridUiState> = _uiState.asStateFlow()
@@ -32,9 +33,9 @@ class PhotoGridViewModel : ViewModel() {
     fun loadPhotos() {
         if (_uiState.value.isLoading) return
 
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
+        viewModelScope.launch {
             repository.getRecentPhotos(page = 1)
                 .onSuccess { photos ->
                     _uiState.value = _uiState.value.copy(
@@ -57,9 +58,9 @@ class PhotoGridViewModel : ViewModel() {
         val currentState = _uiState.value
         if (currentState.isLoading || currentState.isLoadingMore || !currentState.canLoadMore) return
 
-        viewModelScope.launch {
-            _uiState.value = currentState.copy(isLoadingMore = true)
+        _uiState.value = currentState.copy(isLoadingMore = true)
 
+        viewModelScope.launch {
             val nextPage = currentState.currentPage + 1
             repository.getRecentPhotos(page = nextPage)
                 .onSuccess { newPhotos ->
@@ -81,5 +82,14 @@ class PhotoGridViewModel : ViewModel() {
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return PhotoGridViewModel() as T
+            }
+        }
     }
 }

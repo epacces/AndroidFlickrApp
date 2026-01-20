@@ -1,11 +1,12 @@
 package com.hepakkes.flickrapp.data
 
+import com.hepakkes.flickrapp.data.api.FlickrApiService
 import com.hepakkes.flickrapp.data.api.RetrofitInstance
 import com.hepakkes.flickrapp.data.model.FlickrPhoto
 
-class FlickrRepository {
-
-    private val apiService = RetrofitInstance.flickrApiService
+class FlickrRepository(
+    private val apiService: FlickrApiService = RetrofitInstance.flickrApiService
+) {
 
     suspend fun getRecentPhotos(page: Int): Result<List<FlickrPhoto>> {
         return try {
