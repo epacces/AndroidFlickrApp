@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.hepakkes.flickrapp.ui.screens.PhotoGridScreen
+import com.hepakkes.flickrapp.ui.navigation.FlickrNavHost
 import com.hepakkes.flickrapp.ui.theme.FlickrAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FlickrAppTheme {
-                PhotoGridScreen()
+                FlickrNavHost()
             }
         }
     }

@@ -55,6 +55,9 @@ dependencies {
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
     // Unit Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

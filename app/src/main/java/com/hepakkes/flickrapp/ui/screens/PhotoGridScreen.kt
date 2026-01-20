@@ -1,5 +1,6 @@
 package com.hepakkes.flickrapp.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,7 +39,8 @@ import com.hepakkes.flickrapp.data.model.FlickrPhoto
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoGridScreen(
-    viewModel: PhotoGridViewModel = viewModel()
+    viewModel: PhotoGridViewModel = viewModel(),
+    onPhotoClick: (FlickrPhoto) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val gridState = rememberLazyGridState()
@@ -102,7 +104,10 @@ fun PhotoGridScreen(
                             items = uiState.photos,
                             key = { photo -> photo.id }
                         ) { photo ->
-                            PhotoGridItem(photo = photo)
+                            PhotoGridItem(
+                                photo = photo,
+                                onClick = { onPhotoClick(photo) }
+                            )
                         }
 
                         // Loading indicator at the bottom
@@ -126,13 +131,17 @@ fun PhotoGridScreen(
 }
 
 @Composable
-fun PhotoGridItem(photo: FlickrPhoto) {
+fun PhotoGridItem(
+    photo: FlickrPhoto,
+    onClick: () -> Unit
+) {
     AsyncImage(
         model = photo.getPhotoUrl("q"),
         contentDescription = photo.title,
         modifier = Modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(8.dp)),
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(onClick = onClick),
         contentScale = ContentScale.Crop
     )
 }
